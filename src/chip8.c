@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 // fontset do CHIP-8. Deve ser carregado na memória
 unsigned char chip8_fontset[80] =
 { 
@@ -46,6 +50,19 @@ unsigned short sp;
 // Keypad
 unsigned char key[16];
 
+void showMemory() {
+    for(int i = 0; i < 4096; i++) {
+
+        if(i % 16 == 0) {
+            printf("\n0x%04X:\t", i);
+        }
+
+        printf("%02X ", memory[i]);
+    }
+    printf("\n");
+}
+
+
 void initialize() {
 
     // Programa começa na posição 0x200 da memória
@@ -75,7 +92,7 @@ void initialize() {
     }
 
     // Carrega fontset na memória
-    for(int i= 0; i < 80; i++) {
+    for(int i= 0; i < 80; ++i) {
         memory[i] = chip8_fontset[i];
     }
 
@@ -87,11 +104,42 @@ void fetch() {
 }
 
 
+int loadGame(char *gameName) {
+    FILE * game;
+    int maxGameSize = 0xFFF - 0x200;
+    unsigned char * buffer;
+
+    printf("Game: %s\n\n\n", gameName);
+
+    char gamePath[30] = "../games/";
+
+    strcat(gamePath, gameName);
+
+    game = fopen(gamePath, "rb");
+    if (game == NULL) {
+        printf("Impossível abrir o jogo!\n");
+        return 0;
+    }
+
+    buffer = malloc(maxGameSize);
+
+    fread(buffer, 1, maxGameSize, game);
+
+    for(int i = 0; i < maxGameSize; ++i)
+    memory[i + 512] = buffer[i];
+
+    free(buffer);
+}
+
+
 void emulateCycle() {
-    // Fetch opcode
+
+    fetch();
     // Decode opcode
     // Execute opcode
 
     // Update timers
+
+    showMemory();
 
 }
