@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 // fontset do CHIP-8. Deve ser carregado na memória
 unsigned char chip8_fontset[80] =
@@ -99,11 +100,6 @@ void initialize() {
     // TODO: Resetar timers
 }
 
-void fetch() {
-    opcode = memory[PC] << 8 | memory[PC+1];
-}
-
-
 int loadGame(char *gameName) {
     FILE * game;
     int maxGameSize = 0xFFF - 0x200;
@@ -131,15 +127,187 @@ int loadGame(char *gameName) {
     free(buffer);
 }
 
+void fetch() {
+    opcode = memory[PC] << 8 | memory[PC+1];
+}
+
+void decode() {
+
+    
+    printf("OPCODE: 0x%04X\n", opcode);
+
+    switch(opcode & 0xF000) {
+
+        case 0x0000: {
+
+            switch(opcode & 0x000F) {
+                case 0x0000: {
+                    // Limpa display
+                    for(int i = 0; i < (64 * 32); i++) {
+                        gfx[i] = 0;
+                    }
+                    PC += 2;
+                    break;
+                }
+                case 0x000E: {
+                    PC = stack[--sp];
+                    break;
+                }
+                default: {
+                    printf("OPCODE não encontrado!\n");
+                    PC += 2;
+                    break;
+                }
+            }
+            
+
+            break;
+        }
+        case 0x1000: {
+            PC = (opcode & 0x0FFF);
+            break;
+        }
+        case 0x2000: {
+            stack[sp] = PC;
+            ++sp;
+            PC = (opcode & 0x0FFF);
+            break;
+        }
+        case 0x3000: {
+            if(V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF)) {
+                PC += 4;
+            } else {
+                PC += 2;
+            }
+            break;
+        }
+        case 0x4000: {
+            if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)) {
+                PC += 4;
+            } else {
+                PC += 2;
+            }
+            break;
+        }
+        case 0x5000: {
+            if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]) {
+                PC += 4;
+            } else {
+                PC += 2;
+            }
+            break;
+        }
+        case 0x6000: {
+            V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF);
+            PC += 2;
+            break;
+        }
+        case 0x7000: {
+            V[(opcode & 0x0F00) >> 8] += (opcode & 0x00FF);
+            PC += 2;
+            break;
+        }
+        case 0x8000: {
+
+            switch(opcode & 0x000F) {
+                case 0x0000: {
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
+                    PC += 2;
+                    break;
+                }
+                case 0x0001: {
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 4];
+                    PC += 2;
+                    break;
+                }
+                case 0x0002: {
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4];
+                    PC += 2;
+                    break;
+                }
+                case 0x0003: {
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4];
+                    PC =+ 2;
+                    break;
+                }
+                case 0x0004: {
+                    if (V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8])) {
+                        V[0xF] = 1;
+                    } else {
+                        V[0xF] = 0;
+                    }
+                    V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
+                    PC += 2;
+                    break;
+                }
+                case 0x0005: {
+                    if(V[(opcode & 0x00F0) >> 4] > V[(opcode & 0x0F00) >> 8]) {
+                        V[0xF] = 0;
+                    } else {
+                        V[0xF] = 1;
+                    }
+                    V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4]; 
+                    PC += 2;
+                    break;
+                }
+                case 0x0006: {
+                    V[0xF] = V[(opcode & 0x0F00) >> 8] & 0x1;
+                    V[(opcode & 0x0F00) >> 8] >>= 1;
+                    PC += 2;
+                    break;
+                }
+                case 0x0007: {
+                    if(V[(opcode & 0x0F00) >> 8] > V[(opcode & 0x00F0) >> 4]) {
+                        V[0xF] = 0;
+                    } else {
+                        V[0xF] = 1;
+                    }
+                    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
+                    PC += 2;
+                    break;
+                }
+                default: {
+                    printf("OPCODE não encontrado!\n");
+                    PC += 2;
+                    break;
+                }
+
+            }
+
+            break;
+        }
+        case 0xA000: {
+            I = opcode & 0x0FFF;
+            PC+=2;
+            break;
+        }
+        case 0xB000: {
+            PC = V[0] + (opcode & 0x0FFF);
+            break;
+        }
+        case 0xC000: {
+            srand(time(NULL));
+            V[(opcode & 0xF000) >> 12] = rand()%255 & (opcode & 0x0FFF);
+            PC += 2;
+            break;
+        }
+        default: {
+            printf("OPCODE não encontrado!\n");
+            PC += 2;
+            break;
+        }
+    }
+
+    printf("\n");
+
+    
+}
 
 void emulateCycle() {
 
     fetch();
-    // Decode opcode
-    // Execute opcode
+    decode();
 
     // Update timers
-
-    showMemory();
 
 }
