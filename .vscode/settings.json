@@ -1,0 +1,19 @@
+{
+  "files.associations": {
+    "*.cs": "csharp",
+    "iostream": "cpp",
+    "ostream": "cpp"
+  },
+  "makefile.launchConfigurations": [
+    {
+      "cwd": "/home/felipe/projects/myCHIP-8",
+      "binaryPath": "/home/felipe/projects/myCHIP-8/chip8",
+      "binaryArgs": []
+    },
+    {
+      "cwd": "/home/felipe/projects/myCHIP-8",
+      "binaryPath": "/home/felipe/projects/myCHIP-8/chip8.out",
+      "binaryArgs": []
+    }
+  ]
+}
