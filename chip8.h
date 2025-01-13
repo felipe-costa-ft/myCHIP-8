@@ -25,7 +25,7 @@ class chip8 {
 
     public:
         void initialize();
-        void loadGame(string game);
+        int loadGame(string game);
 
         void printMemory();
 };

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <iomanip>
 #include <string>
 
@@ -49,8 +50,38 @@ void chip8::initialize() {
     }
 };
 
-void chip8::loadGame(string game) {
-    cout << game << " Loaded!" << endl;
+int chip8::loadGame(string game) {
+
+    string filePath = "games/" + game;
+
+
+    FILE* file = fopen(filePath.c_str(), "rb");
+    if (!file) {
+      cerr << "Error: Could not open file " << filePath << endl;
+      return -1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+
+    unsigned char* buffer = new unsigned char[fileSize];
+
+    size_t bytesRead = fread(buffer, sizeof(unsigned char), fileSize, file);
+    if (bytesRead != fileSize) {
+        std::cerr << "Error reading the file." << std::endl;
+        delete[] buffer;
+        fclose(file);
+        return 1;
+    }
+
+    for(int i = 0; i < bytesRead; ++i)
+    memory[i + 512] = buffer[i];
+
+    delete[] buffer;
+    fclose(file);
+
+    return 0;
 };
 
 void chip8::printMemory() {
