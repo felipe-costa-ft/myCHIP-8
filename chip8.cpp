@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 #include "chip8.h"
@@ -43,7 +44,7 @@ void chip8::initialize() {
       memory[i] = 0;
     }
 
-    for (int i = 0; i < 80; ++i) {
+    for (int i = 0; i < sizeof(chip8_fontset); ++i) {
       memory[i] = chip8_fontset[i];
     }
 };
@@ -51,3 +52,14 @@ void chip8::initialize() {
 void chip8::loadGame(string game) {
     cout << game << " Loaded!" << endl;
 };
+
+void chip8::printMemory() {
+    for (int i = 0; i < sizeof(memory); ++i) {
+        std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(memory[i]) << "\t";
+
+        if ((i + 1) % 5 == 0) {
+            std::cout << std::endl;
+        }
+    }
+    std::cout << std::dec;
+}

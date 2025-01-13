@@ -10,6 +10,7 @@ using namespace std;
 int main() {
 
     myChip8.initialize();
+    myChip8.printMemory();
     // myChip8.loadGame("pong");
 
     bool running = true;
