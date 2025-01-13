@@ -26,7 +26,26 @@ unsigned char chip8_fontset[80] =
 };
 
 void chip8::initialize() {
-    cout << "Initialized!" << endl;
+    pc = 0x200;
+    opcode = 0;
+    I = 0;
+    sp = 0;
+
+    for (int i = 0; i < sizeof(stack); ++i) {
+      stack[i] = 0;
+    }
+
+    for (int i = 0; i < sizeof(V); ++i) {
+      V[i] = 0;
+    }
+
+    for (int i = 0; i < sizeof(memory); ++i) {
+      memory[i] = 0;
+    }
+
+    for (int i = 0; i < 80; ++i) {
+      memory[i] = chip8_fontset[i];
+    }
 };
 
 void chip8::loadGame(string game) {

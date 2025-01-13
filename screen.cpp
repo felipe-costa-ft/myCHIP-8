@@ -30,7 +30,6 @@ int Screen::initializeSurface() {
         return -1;
     }
 
-    SDL_FillRect( winSurface, NULL, SDL_MapRGB( winSurface->format, 255, 90, 120 ));
     SDL_UpdateWindowSurface( win );
 
     return 0;

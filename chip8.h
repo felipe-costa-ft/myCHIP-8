@@ -1,11 +1,16 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+#include "screen.h"
+
 using namespace std;
 
 class chip8 {
 
     private:
+
+        Screen screen;
+
         unsigned short opcode;
         unsigned char memory[4096];
         unsigned char V[16];
