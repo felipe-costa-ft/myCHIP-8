@@ -1,16 +1,16 @@
 #include <SDL2/SDL.h>
 
-class Screen {
+class Screen
+{
 
-    private:
-        SDL_Window* win;
-        SDL_Surface* winSurface;
+private:
+    SDL_Window *win;
+    SDL_Surface *winSurface;
 
-        int initializeWindow();
-        int initializeSurface();
+    int initializeWindow();
+    int initializeSurface();
 
-    public:
-        Screen();
-        ~Screen();
-
+public:
+    Screen();
+    ~Screen();
 };

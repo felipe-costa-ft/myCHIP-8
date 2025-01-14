@@ -7,9 +7,11 @@ chip8 myChip8;
 
 using namespace std;
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
-    if (argc < 2) {
+    if (argc < 2)
+    {
         cerr << "Usage: " << argv[0] << " <game_name>" << endl;
         return 1;
     }
@@ -20,15 +22,16 @@ int main(int argc, char **argv) {
     myChip8.loadGame(gameName);
     myChip8.printMemory();
 
-
     bool running = true;
     SDL_Event event;
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+    while (running)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 running = false;
             }
         }
     }
-
 }
