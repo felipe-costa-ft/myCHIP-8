@@ -94,3 +94,18 @@ void chip8::printMemory() {
     }
     std::cout << std::dec;
 }
+
+void chip8::emulateCycle() {
+    opcode = memory[pc] << 8 | memory[pc + 1];
+
+    switch (opcode & 0xF000)
+    {
+    case 0xA000:
+      I = opcode & 0x0FFF;
+      pc += 2;
+      break;
+    
+    default:
+      break;
+    }
+}
