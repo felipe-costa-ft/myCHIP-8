@@ -29,6 +29,7 @@ private:
 public:
     void initialize();
     int loadGame(string game);
+    void drawGraphics();
     void emulateCycle();
 
     void printMemory();

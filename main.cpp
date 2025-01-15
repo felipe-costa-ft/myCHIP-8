@@ -24,7 +24,6 @@ int main(int argc, char **argv)
 
     myChip8.initialize();
     myChip8.loadGame(gameName);
-    myChip8.printMemory();
 
     bool running = true;
     SDL_Event event;
@@ -44,6 +43,8 @@ int main(int argc, char **argv)
         }
 
         myChip8.emulateCycle();
+
+        myChip8.drawGraphics();
 
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

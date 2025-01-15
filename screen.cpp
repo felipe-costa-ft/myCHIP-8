@@ -14,7 +14,7 @@ int Screen::initializeWindow()
         return -1;
     }
 
-    win = SDL_CreateWindow("CHIP-8 Emulator", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+    win = SDL_CreateWindow("CHIP-8 Emulator", 100, 100, 640, 320, SDL_WINDOW_SHOWN);
 
     if (!win)
     {
@@ -45,6 +45,7 @@ Screen::Screen()
 
     if (initializeWindow() >= 0)
     {
+        renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
         initializeSurface();
     }
 }

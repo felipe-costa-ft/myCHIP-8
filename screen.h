@@ -4,13 +4,13 @@ class Screen
 {
 
 private:
-    SDL_Window *win;
-    SDL_Surface *winSurface;
-
     int initializeWindow();
     int initializeSurface();
 
 public:
+    SDL_Window *win;
+    SDL_Surface *winSurface;
+    SDL_Renderer *renderer;
     Screen();
     ~Screen();
 };
