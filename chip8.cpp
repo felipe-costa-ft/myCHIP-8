@@ -332,6 +332,102 @@ void chip8::emulateCycle()
       break;
     }
 
+  case 0xF000:
+    switch (opcode & 0x00FF)
+    {
+    case 0x0007:
+      V[(opcode & 0x0F00) >> 8] = delay_timer;
+      pc += 2;
+      break;
+
+    case 0x000A:
+    {
+      bool keyPressed = false;
+
+      for (int i = 0; i < 16; ++i)
+      {
+        if (key[i] != 0)
+        {
+          V[(opcode & 0x0F00) >> 8] = i;
+          keyPressed = true;
+          break;
+        }
+      }
+
+      if (!keyPressed)
+      {
+        break;
+      }
+
+      pc += 2;
+      break;
+    }
+
+    case 0x0015:
+      delay_timer = V[(opcode & 0x0F00) >> 8];
+      pc += 2;
+      break;
+
+    case 0x0018:
+      sound_timer = V[(opcode & 0x0F00) >> 8];
+      pc += 2;
+      break;
+
+    case 0x001E:
+      I += V[(opcode & 0x0F00) >> 8];
+      pc += 2;
+      break;
+
+    case 0x0029:
+      I = FONTSET_START_ADDRESS + (V[(opcode & 0x0F00) >> 8] * 5);
+      pc += 2;
+      break;
+
+    case 0x0033:
+    {
+      unsigned char value = V[(opcode & 0x0F00) >> 8];
+
+      memory[I] = value / 100;
+
+      memory[I + 1] = (value / 10) % 10;
+
+      memory[I + 2] = value % 10;
+
+      pc += 2;
+      break;
+    }
+
+    case 0x0055:
+    {
+      unsigned char x = (opcode & 0x0F00) >> 8;
+
+      for (int i = 0; i <= x; ++i)
+      {
+        memory[I + i] = V[i];
+      }
+
+      pc += 2;
+      break;
+    }
+
+    case 0x0065:
+    {
+      unsigned char x = (opcode & 0x0F00) >> 8;
+
+      for (int i = 0; i <= x; ++i)
+      {
+        V[i] = memory[I + i];
+      }
+
+      pc += 2;
+      break;
+    }
+
+    default:
+      cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
+      break;
+    }
+
   default:
     cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
     break;
