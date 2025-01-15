@@ -5,6 +5,8 @@
 
 using namespace std;
 
+const unsigned int FONTSET_START_ADDRESS = 0x50;
+
 class chip8
 {
 
@@ -22,6 +24,7 @@ private:
     unsigned short stack[16];
     unsigned short sp;
     unsigned char key[16];
+    bool drawFlag;
 
 public:
     void initialize();

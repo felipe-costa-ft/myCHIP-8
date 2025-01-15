@@ -33,6 +33,7 @@ void chip8::initialize()
   opcode = 0;
   I = 0;
   sp = 0;
+  drawFlag = false;
 
   for (int i = 0; i < sizeof(stack); ++i)
   {
@@ -51,7 +52,7 @@ void chip8::initialize()
 
   for (int i = 0; i < sizeof(chip8_fontset); ++i)
   {
-    memory[i] = chip8_fontset[i];
+    memory[i + FONTSET_START_ADDRESS] = chip8_fontset[i];
   }
 };
 
@@ -120,6 +121,7 @@ void chip8::emulateCycle()
       {
         gfx[i] = 0;
       }
+      drawFlag = true;
       pc += 2;
       break;
 
@@ -129,7 +131,7 @@ void chip8::emulateCycle()
       break;
 
     default:
-      cout << "Opcode not supported!" << endl;
+      cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
     }
     break;
 
@@ -138,7 +140,7 @@ void chip8::emulateCycle()
     break;
 
   case 0x2000:
-    stack[sp] = pc;
+    stack[sp] = pc + 2;
     ++sp;
     pc = opcode & 0x0FFF;
     break;
@@ -210,7 +212,7 @@ void chip8::emulateCycle()
       break;
 
     case 0x0004:
-      V[0xF] = V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8]) ? 1 : 0;
+      V[0xF] = (V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8])) ? 1 : 0;
       V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
       pc += 2;
       break;
@@ -240,7 +242,7 @@ void chip8::emulateCycle()
       break;
 
     default:
-      cout << "Opcode not supported!" << endl;
+      cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
       break;
     }
     break;
@@ -261,7 +263,77 @@ void chip8::emulateCycle()
     pc += 2;
     break;
 
+  case 0xB000:
+    pc = V[0x0] + (opcode & 0x0FFF);
+    break;
+
+  case 0xC000:
+  {
+    unsigned char randomNumber = rand() % 256;
+    V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF) & randomNumber;
+    pc += 2;
+  }
+  break;
+
+  case 0xD000:
+  {
+    unsigned short x = V[(opcode & 0x0F00) >> 8];
+    unsigned short y = V[(opcode & 0x00F0) >> 4];
+    unsigned short height = opcode & 0x000F;
+    unsigned short pixel;
+
+    V[0xF] = 0;
+    for (int yline = 0; yline < height; yline++)
+    {
+      pixel = memory[I + yline];
+      for (int xline = 0; xline < 8; xline++)
+      {
+        if ((pixel & (0x80 >> xline)) != 0)
+        {
+          if (gfx[(x + xline + ((y + yline) * 64))] == 1)
+            V[0xF] = 1;
+          gfx[x + xline + ((y + yline) * 64)] ^= 1;
+        }
+      }
+    }
+
+    drawFlag = true;
+    pc += 2;
+  }
+  break;
+
+  case 0xE000:
+    switch (opcode & 0x00FF)
+    {
+    case 0x009E:
+      if (key[V[(opcode & 0x0F00) >> 8]] != 0)
+      {
+        pc += 4;
+      }
+      else
+      {
+        pc += 2;
+      }
+      break;
+
+    case 0x00A1:
+      if (key[V[(opcode & 0x0F00) >> 8]] == 0)
+      {
+        pc += 4;
+      }
+      else
+      {
+        pc += 2;
+      }
+      break;
+
+    default:
+      cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
+      break;
+    }
+
   default:
+    cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
     break;
   }
 }

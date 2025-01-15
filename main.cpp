@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+#include <ctime>
 #include "chip8.h"
 
 chip8 myChip8;
@@ -9,6 +10,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    srand(static_cast<unsigned int>(time(0)));
 
     if (argc < 2)
     {
