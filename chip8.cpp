@@ -35,6 +35,9 @@ void chip8::initialize()
   sp = 0;
   drawFlag = false;
 
+  delay_timer = 0;
+  sound_timer = 0;
+
   for (int i = 0; i < sizeof(stack); ++i)
   {
     stack[i] = 0;
@@ -433,5 +436,15 @@ void chip8::emulateCycle()
   default:
     cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
     break;
+  }
+
+  if (delay_timer > 0)
+    --delay_timer;
+
+  if (sound_timer > 0)
+  {
+    if (sound_timer == 1)
+      printf("BEEP!\n");
+    --sound_timer;
   }
 }
