@@ -35,5 +35,7 @@ int main(int argc, char **argv)
                 running = false;
             }
         }
+
+        myChip8.emulateCycle();
     }
 }

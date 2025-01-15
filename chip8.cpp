@@ -331,6 +331,7 @@ void chip8::emulateCycle()
       cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
       break;
     }
+    break;
 
   case 0xF000:
     switch (opcode & 0x00FF)
@@ -427,6 +428,7 @@ void chip8::emulateCycle()
       cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
       break;
     }
+    break;
 
   default:
     cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
