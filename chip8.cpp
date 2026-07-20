@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <iomanip>
+#include <iterator>
 #include <string>
 
 #include "chip8.h"
@@ -38,7 +39,7 @@ void chip8::initialize()
   delay_timer = 0;
   sound_timer = 0;
 
-  for (int i = 0; i < sizeof(stack); ++i)
+  for (int i = 0; i < std::size(stack); ++i)
   {
     stack[i] = 0;
   }
@@ -51,6 +52,16 @@ void chip8::initialize()
   for (int i = 0; i < sizeof(memory); ++i)
   {
     memory[i] = 0;
+  }
+
+  for (int i = 0; i < std::size(gfx); ++i)
+  {
+    gfx[i] = 0;
+  }
+
+  for (int i = 0; i < sizeof(key); ++i)
+  {
+    key[i] = 0;
   }
 
   for (int i = 0; i < sizeof(chip8_fontset); ++i)
@@ -441,3 +452,62 @@ void chip8::emulateCycle()
     --sound_timer;
   }
 }
+
+void chip8::updateKey(char pressedKey, int value)
+{
+
+  switch (pressedKey)
+  {
+  case 'x':
+    key[0] = value;
+    break;
+  case '1':
+    key[1] = value;
+    break;
+  case '2':
+    key[2] = value;
+    break;
+  case '3':
+    key[3] = value;
+    break;
+  case 'q':
+    key[4] = value;
+    break;
+  case 'w':
+    key[5] = value;
+    break;
+  case 'e':
+    key[6] = value;
+    break;
+  case 'a':
+    key[7] = value;
+    break;
+  case 's':
+    key[8] = value;
+    break;
+  case 'd':
+    key[9] = value;
+    break;
+  case 'z':
+    key[10] = value;
+    break;
+  case 'c':
+    key[11] = value;
+    break;
+  case '4':
+    key[12] = value;
+    break;
+  case 'r':
+    key[13] = value;
+    break;
+  case 'f':
+    key[14] = value;
+    break;
+  case 'v':
+    key[15] = value;
+    break;
+
+  default:
+    break;
+  }
+};

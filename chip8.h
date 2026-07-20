@@ -31,6 +31,6 @@ public:
     int loadGame(string game);
     void drawGraphics();
     void emulateCycle();
-
+    void updateKey(char pressedKey, int value);
     void printMemory();
 };

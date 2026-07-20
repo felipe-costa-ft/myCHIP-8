@@ -43,6 +43,10 @@ int Screen::initializeSurface()
 Screen::Screen()
 {
 
+    win = nullptr;
+    winSurface = nullptr;
+    renderer = nullptr;
+
     if (initializeWindow() >= 0)
     {
         renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
@@ -55,6 +59,8 @@ Screen::~Screen()
     SDL_DestroyWindow(win);
     win = NULL;
     winSurface = NULL;
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(win);
 
     SDL_Quit();
 }
