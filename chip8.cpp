@@ -453,57 +453,57 @@ void chip8::emulateCycle()
   }
 }
 
-void chip8::updateKey(char pressedKey, int value)
+void chip8::updateKey(SDL_Scancode updatedKey, bool value)
 {
 
-  switch (pressedKey)
+  switch (updatedKey)
   {
-  case 'x':
+  case SDL_SCANCODE_X:
     key[0] = value;
     break;
-  case '1':
+  case SDL_SCANCODE_1:
     key[1] = value;
     break;
-  case '2':
+  case SDL_SCANCODE_2:
     key[2] = value;
     break;
-  case '3':
+  case SDL_SCANCODE_3:
     key[3] = value;
     break;
-  case 'q':
+  case SDL_SCANCODE_Q:
     key[4] = value;
     break;
-  case 'w':
+  case SDL_SCANCODE_W:
     key[5] = value;
     break;
-  case 'e':
+  case SDL_SCANCODE_E:
     key[6] = value;
     break;
-  case 'a':
+  case SDL_SCANCODE_A:
     key[7] = value;
     break;
-  case 's':
+  case SDL_SCANCODE_S:
     key[8] = value;
     break;
-  case 'd':
+  case SDL_SCANCODE_D:
     key[9] = value;
     break;
-  case 'z':
+  case SDL_SCANCODE_Z:
     key[10] = value;
     break;
-  case 'c':
+  case SDL_SCANCODE_C:
     key[11] = value;
     break;
-  case '4':
+  case SDL_SCANCODE_4:
     key[12] = value;
     break;
-  case 'r':
+  case SDL_SCANCODE_R:
     key[13] = value;
     break;
-  case 'f':
+  case SDL_SCANCODE_F:
     key[14] = value;
     break;
-  case 'v':
+  case SDL_SCANCODE_V:
     key[15] = value;
     break;
 
