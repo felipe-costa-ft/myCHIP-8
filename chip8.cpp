@@ -441,16 +441,6 @@ void chip8::emulateCycle()
     cout << "Unsupported opcode: 0x" << std::hex << opcode << endl;
     break;
   }
-
-  if (delay_timer > 0)
-    --delay_timer;
-
-  if (sound_timer > 0)
-  {
-    if (sound_timer == 1)
-      printf("BEEP!\n");
-    --sound_timer;
-  }
 }
 
 void chip8::updateKey(SDL_Scancode updatedKey, bool value)
@@ -511,3 +501,19 @@ void chip8::updateKey(SDL_Scancode updatedKey, bool value)
     break;
   }
 };
+
+unsigned char chip8::getSoundTimer()
+{
+  return sound_timer;
+}
+
+void chip8::updateTimers()
+{
+  if (delay_timer > 0)
+    --delay_timer;
+
+  if (sound_timer > 0)
+  {
+    --sound_timer;
+  }
+}

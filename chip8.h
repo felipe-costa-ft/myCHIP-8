@@ -33,4 +33,6 @@ public:
     void emulateCycle();
     void updateKey(SDL_Scancode updatedKey, bool value);
     void printMemory();
+    void updateTimers();
+    unsigned char getSoundTimer();
 };

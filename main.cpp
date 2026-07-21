@@ -10,8 +10,35 @@ chip8 myChip8;
 
 using namespace std;
 
+bool soundOn = false;
+double audioPhase = 0.0;
+int audioSampleRate = 44100;
+
+void audioCallback(void *userdata, Uint8 *stream, int len)
+{
+    Sint16 *buffer = reinterpret_cast<Sint16 *>(stream);
+    int samples = len / 2;
+    const double freq = 440.0;
+    const Sint16 amplitude = 3000;
+
+    for (int i = 0; i < samples; i++)
+    {
+        if (!soundOn)
+        {
+            buffer[i] = 0;
+            continue;
+        }
+        buffer[i] = (audioPhase < 0.5) ? amplitude : -amplitude;
+        audioPhase += freq / audioSampleRate;
+        if (audioPhase >= 1.0)
+            audioPhase -= 1.0;
+    }
+}
+
 int main(int argc, char **argv)
 {
+
+    const int cyclesPerFrame = 10;
     srand(static_cast<unsigned int>(time(0)));
 
     if (argc < 2)
@@ -21,6 +48,16 @@ int main(int argc, char **argv)
     }
 
     string gameName = argv[1];
+
+    SDL_AudioSpec want{}, have{};
+    want.freq = audioSampleRate;
+    want.format = AUDIO_S16SYS;
+    want.channels = 1;
+    want.samples = 512;
+    want.callback = audioCallback;
+
+    SDL_AudioDeviceID audioDevice = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
+    SDL_PauseAudioDevice(audioDevice, 0);
 
     myChip8.initialize();
     myChip8.loadGame(gameName);
@@ -52,7 +89,14 @@ int main(int argc, char **argv)
             }
         }
 
-        myChip8.emulateCycle();
+        for (int i = 0; i < cyclesPerFrame; i++)
+        {
+            myChip8.emulateCycle();
+        }
+
+        myChip8.updateTimers();
+
+        soundOn = (myChip8.getSoundTimer() > 0);
 
         myChip8.drawGraphics();
 
